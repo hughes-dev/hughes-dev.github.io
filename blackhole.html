@@ -52,29 +52,15 @@
                                     
                                   	Your browser does not support the video tag.
                                 </video>
-								<p>This application is a 2D simulation of a black hole, 
-									illustrating the dynamic behavior of celestial objects under gravitational influence. 
-									Built with C# and Windows Presentation Foundation (WPF), 
-									the simulation provides a visual and intuitive understanding of gravitational forces 
-									and orbital dynamics in a simple yet effective manner.<br>
+								<p>
+									This dynamic space simulation, rendered in 2D, showcases the gravitational interactions among space objects in a cosmic playground, featuring a multitude of celestial bodies each exerting gravitational forces on one another. The system is formulated around Newton's laws of gravitation, modeling the influence of each object's mass and distance on its gravitational pull.<br>
 
-									The simulation creates a central black hole and a predetermined number of other celestial bodies. 
-									Each of these bodies is assigned a randomized position, velocity, and acceleration. 
-									The black hole exerts a gravitational pull on the surrounding objects, 
-									with the strength of the pull determined by a constant mimicking the gravitational constant. 
-									The objects then move according to the resulting forces, 
-									effectively demonstrating how gravitational forces lead to the creation of orbits. 
-									If any of the objects comes too close to the black hole, it's absorbed, 
-									demonstrating the concept of event horizons.<br>
+									The primary challenge of developing this application was overcoming the computational complexity that arises when every object is influencing every other object in the simulation. The initial design, where only a central black hole exerted a gravitational pull, was considerably less complicated than this more realistic approach. To overcome this, the code was carefully optimized to handle multiple interactions efficiently.<br>
 									
-									Carefully architected and organized, the application is divided into distinct classes and functions, 
-									each having clear, distinct responsibilities. 
-									From the calculations of distance and velocity to the creation and control of each space object, 
-									the application is a testament to a clean, modular, and scalable design. 
-									This project showcases my proficiency in C# programming, understanding of physics, 
-									and the ability to translate complex phenomena into an intuitive, visual medium. 
-									It's not just a great tool for learning and teaching, but also an impressive demonstration of 
-									bridging science and software development in an engaging way.</p>
+									Another key challenge was the collision handling mechanism. Given the premise of the simulation, an object needed to increase its mass upon colliding with another. This led to challenges with managing object indices during the collision detection and resolution process. A solution was found by adjusting the indices appropriately when removing an object after a collision.<br>
+									
+									With these adjustments, the final product presents an intricate dance of celestial bodies, providing a fascinating demonstration of gravitational forces in action. This captivating 2D simulation provides a visually appealing and engaging representation of space phenomena, offering a glimpse into the cosmic ballet that unfolds in our universe.
+								</p>
 								<ul class="actions special">
 									<li><a href="https://github.com/hughes-dev/PhysicsSimulators" class="button large">See Code</a></li>
 								</ul>
