@@ -1,0 +1,916 @@
+<!--
+Prison System portfolio page (single-file, drop-in).
+- No external libraries.
+- Responsive.
+- Includes: hero, system-at-a-glance, architecture diagram (SVG), subsystems accordion, timeline, responsibilities, impact, tech, FAQ, disclosure.
+Save as: prison-system.html
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prison Robotics Monitoring System — Portfolio</title>
+  <meta name="description" content="Distributed robotics platform spanning robot-side services and a server-side UI/API stack with streaming, PostgreSQL, and local LLM-based image analysis." />
+
+  <style>
+    :root{
+      --bg: #0b0f14;
+      --panel: #0f1620;
+      --panel2:#121b26;
+      --text: #e7eef8;
+      --muted:#a8b3c7;
+      --faint:#6f7e97;
+      --line:#243246;
+      --accent:#7dd3fc;      /* cyan */
+      --accent2:#a78bfa;     /* violet */
+      --good:#86efac;        /* green */
+      --warn:#fbbf24;        /* amber */
+      --bad:#fb7185;         /* rose */
+      --shadow: 0 18px 45px rgba(0,0,0,.35);
+      --radius: 18px;
+      --radius2: 14px;
+      --max: 1080px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      font-family: var(--sans);
+      background: radial-gradient(1200px 800px at 15% -10%, rgba(125,211,252,.18), transparent 55%),
+                  radial-gradient(900px 650px at 85% 0%, rgba(167,139,250,.14), transparent 45%),
+                  radial-gradient(900px 650px at 60% 120%, rgba(134,239,172,.10), transparent 40%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      letter-spacing: .2px;
+    }
+
+    a{ color: inherit; text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    .container{ max-width: var(--max); margin: 0 auto; padding: 28px 18px 80px; }
+    header{
+      position: sticky; top: 0; z-index: 40;
+      backdrop-filter: blur(10px);
+      background: rgba(11,15,20,.65);
+      border-bottom: 1px solid rgba(36,50,70,.55);
+    }
+    .nav{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex; align-items:center; justify-content:space-between; gap: 12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap: 10px;
+      font-weight: 650;
+    }
+    .dot{
+      width: 10px; height: 10px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 5px rgba(125,211,252,.12), 0 0 18px rgba(167,139,250,.20);
+    }
+    .navlinks{
+      display:flex; flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .navlinks a{
+      padding: 8px 10px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+    }
+    .navlinks a:hover{
+      border-color: rgba(125,211,252,.25);
+      background: rgba(125,211,252,.06);
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .hero{
+      padding: 34px 0 12px;
+      display:grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 900px){
+      .hero{ grid-template-columns: 1fr; }
+    }
+
+    .kicker{
+      display:inline-flex; align-items:center; gap: 10px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(125,211,252,.22);
+      background: rgba(125,211,252,.06);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .kicker b{ color: var(--text); font-weight: 650; }
+    h1{
+      margin: 14px 0 8px;
+      font-size: clamp(28px, 3.5vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -0.6px;
+    }
+    .subhead{
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 16.5px;
+      max-width: 70ch;
+    }
+
+    .heroActions{ display:flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .btn{
+      border: 1px solid rgba(231,238,248,.12);
+      background: rgba(231,238,248,.04);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      display:inline-flex; align-items:center; gap: 10px;
+      transition: transform .08s ease, border-color .12s ease, background .12s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .btn:hover{
+      background: rgba(125,211,252,.06);
+      border-color: rgba(125,211,252,.25);
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(125,211,252,.14), rgba(167,139,250,.10));
+      border-color: rgba(125,211,252,.25);
+    }
+    .btn code{ font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+
+    .sideCard{
+      background: linear-gradient(180deg, rgba(18,27,38,.92), rgba(15,22,32,.92));
+      border: 1px solid rgba(36,50,70,.65);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .sideCard h3{ margin: 0 0 12px; font-size: 14px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .12em; }
+    .pillRow{ display:flex; flex-wrap: wrap; gap: 8px; }
+    .pill{
+      border: 1px solid rgba(231,238,248,.12);
+      background: rgba(231,238,248,.03);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .pill strong{ color: var(--text); font-weight: 650; }
+
+    section{ margin-top: 18px; }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 900px){ .grid2{ grid-template-columns: 1fr; } }
+
+    .panel{
+      background: rgba(15,22,32,.78);
+      border: 1px solid rgba(36,50,70,.65);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .panel h2{
+      margin: 0 0 10px;
+      font-size: 18px;
+      letter-spacing: -0.2px;
+    }
+    .panel p{ margin: 0 0 10px; color: var(--muted); }
+    .panel p:last-child{ margin-bottom: 0; }
+
+    .stats{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    @media (max-width: 900px){ .stats{ grid-template-columns: 1fr; } }
+
+    .stat{
+      border: 1px solid rgba(231,238,248,.10);
+      background: rgba(231,238,248,.03);
+      border-radius: var(--radius2);
+      padding: 12px;
+    }
+    .stat .k{ font-size: 12px; color: var(--faint); text-transform: uppercase; letter-spacing: .12em; }
+    .stat .v{ font-size: 15px; margin-top: 6px; color: var(--text); font-weight: 650; }
+    .stat .s{ font-size: 12.5px; margin-top: 6px; color: var(--muted); }
+
+    .list{
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .list li{
+      display:flex; gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid rgba(36,50,70,.55);
+      color: var(--muted);
+    }
+    .list li:first-child{ border-top: none; padding-top: 0; }
+    .bullet{
+      width: 10px; height: 10px; border-radius: 3px;
+      margin-top: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      flex: 0 0 auto;
+    }
+
+    /* Accordion */
+    .accordion{ display:flex; flex-direction: column; gap: 10px; }
+    details{
+      border: 1px solid rgba(36,50,70,.65);
+      background: rgba(18,27,38,.78);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 10px 26px rgba(0,0,0,.22);
+    }
+    summary{
+      cursor: pointer;
+      padding: 14px 14px;
+      list-style: none;
+      display:flex; align-items:center; justify-content: space-between; gap: 12px;
+      color: var(--text);
+      font-weight: 650;
+    }
+    summary::-webkit-details-marker{ display:none; }
+    .sumLeft{ display:flex; flex-direction: column; gap: 4px; }
+    .sumLeft span{ color: var(--muted); font-weight: 500; font-size: 13.5px; }
+    .chev{
+      width: 10px; height: 10px;
+      border-right: 2px solid rgba(231,238,248,.75);
+      border-bottom: 2px solid rgba(231,238,248,.75);
+      transform: rotate(-45deg);
+      transition: transform .15s ease;
+      margin-right: 4px;
+    }
+    details[open] .chev{ transform: rotate(45deg); }
+    .detailBody{
+      padding: 0 14px 14px;
+      color: var(--muted);
+      border-top: 1px solid rgba(36,50,70,.55);
+    }
+    .detailBody .mini{
+      display:flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+    }
+    .tag{
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid rgba(231,238,248,.12);
+      background: rgba(231,238,248,.03);
+      padding: 6px 9px;
+      border-radius: 999px;
+    }
+
+    /* Timeline */
+    .timeline{
+      position: relative;
+      margin-top: 10px;
+      padding-left: 14px;
+    }
+    .timeline::before{
+      content:"";
+      position:absolute; left: 4px; top: 0; bottom: 0;
+      width: 2px;
+      background: rgba(36,50,70,.8);
+    }
+    .titem{
+      position: relative;
+      padding: 10px 0 10px 16px;
+      border-top: 1px solid rgba(36,50,70,.55);
+    }
+    .titem:first-child{ border-top: none; padding-top: 0; }
+    .titem::before{
+      content:"";
+      position:absolute; left: -2px; top: 18px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 5px rgba(125,211,252,.10);
+    }
+    .twhen{ font-family: var(--mono); font-size: 12px; color: var(--faint); }
+    .twhat{ margin-top: 4px; color: var(--text); font-weight: 650; }
+    .tnote{ margin-top: 6px; color: var(--muted); font-size: 14px; }
+
+    /* Diagram */
+    .diagramWrap{
+      border: 1px solid rgba(36,50,70,.65);
+      border-radius: var(--radius);
+      background: rgba(15,22,32,.55);
+      overflow: hidden;
+    }
+    .diagramHead{
+      display:flex; align-items:center; justify-content: space-between; gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(36,50,70,.55);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .diagramHead b{ color: var(--text); }
+    .diagram{
+      width: 100%;
+      display:block;
+    }
+
+    /* Footer */
+    footer{
+      margin-top: 18px;
+      color: var(--faint);
+      font-size: 13px;
+      border-top: 1px solid rgba(36,50,70,.55);
+      padding-top: 18px;
+    }
+    .muted{ color: var(--muted); }
+    .small{ font-size: 13.5px; color: var(--muted); }
+    .callout{
+      border: 1px solid rgba(125,211,252,.25);
+      background: rgba(125,211,252,.06);
+      border-radius: var(--radius);
+      padding: 14px;
+      color: var(--muted);
+    }
+    .callout b{ color: var(--text); }
+    .kbd{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 2px 6px;
+      border: 1px solid rgba(231,238,248,.12);
+      border-bottom-color: rgba(231,238,248,.20);
+      background: rgba(231,238,248,.03);
+      border-radius: 6px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="nav">
+    <div class="brand">
+      <span class="dot" aria-hidden="true"></span>
+      <span>Dylan Hughes — Portfolio</span>
+    </div>
+    <nav class="navlinks" aria-label="Section navigation">
+      <a href="#overview">Overview</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#subsystems">Subsystems</a>
+      <a href="#work">My Work</a>
+      <a href="#evolution">Evolution</a>
+      <a href="#impact">Impact</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div>
+      <div class="kicker">
+        <b>Professional Work</b>
+        <span>Stokes Robotics • distributed robotics platform • real deployments & demos</span>
+      </div>
+
+      <h1>Prison Robotics Monitoring System</h1>
+      <p class="subhead">
+        A multi-service system that runs across a quadruped robot and a server.
+        The robot performs patrols and business logic (including <span class="muted">location mapping + headcount</span>),
+        while the server provides the UI, a remote database, streaming coordination, and local LLM-powered image analysis.
+      </p>
+
+      <div class="heroActions">
+        <a class="btn primary" href="#overview" title="Jump to overview">
+          <span>Read the system overview</span>
+          <code>↓</code>
+        </a>
+        <a class="btn" href="#architecture" title="Jump to architecture">
+          <span>View architecture</span>
+          <code>SVG</code>
+        </a>
+        <a class="btn" href="#subsystems" title="Jump to subsystems">
+          <span>See subsystems</span>
+          <code>details</code>
+        </a>
+      </div>
+
+      <div style="margin-top:14px" class="callout">
+        <b>Disclosure:</b> Source code and live demos can’t be shared due to company policy.
+        I can discuss design tradeoffs, failure modes, and implementation details in interviews.
+      </div>
+    </div>
+
+    <aside class="sideCard" aria-label="Project facts">
+      <h3>At a glance</h3>
+      <div class="pillRow">
+        <span class="pill"><strong>Role:</strong> Backend / Systems Engineer</span>
+        <span class="pill"><strong>Domain:</strong> Robotics + CV</span>
+        <span class="pill"><strong>Runtime:</strong> Linux services</span>
+        <span class="pill"><strong>Server:</strong> Flask + PostgreSQL</span>
+        <span class="pill"><strong>Streaming:</strong> MediaMTX (RTSP/WebRTC)</span>
+        <span class="pill"><strong>AI:</strong> Local LLM via Ollama</span>
+        <span class="pill"><strong>Robot:</strong> navigation + headcount logic</span>
+        <span class="pill"><strong>Style:</strong> multi-process / multi-machine</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="k">What it does</div>
+          <div class="v">Patrol + visibility</div>
+          <div class="s">Telemetry, video, events, workflow</div>
+        </div>
+        <div class="stat">
+          <div class="k">Why it matters</div>
+          <div class="v">Real constraints</div>
+          <div class="s">Hardware, networks, reliability</div>
+        </div>
+        <div class="stat">
+          <div class="k">My edge</div>
+          <div class="v">Systems thinking</div>
+          <div class="s">End-to-end ownership, not just endpoints</div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="grid2">
+    <div class="panel">
+      <h2>System overview</h2>
+      <p>
+        The Prison System is a distributed robotics platform built to support robot patrol workflows.
+        It combines <b>robot-side autonomy and business logic</b> with a <b>server-side control plane</b>
+        (UI, database, streaming coordination, and local AI analysis).
+      </p>
+      <ul class="list">
+        <li><span class="bullet"></span><span><b>Robot side</b> handles navigation events, maps low-level nav signals to high-level locations, runs headcount/business logic, and streams media.</span></li>
+        <li><span class="bullet"></span><span><b>Server side</b> hosts the operator UI and API, stores events in PostgreSQL, runs MediaMTX, and performs local LLM-based image analysis via Ollama.</span></li>
+        <li><span class="bullet"></span><span>Designed to evolve rapidly with demo-driven requirements while staying debuggable and deployable on constrained machines.</span></li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>Design goals</h2>
+      <ul class="list">
+        <li><span class="bullet"></span><span><b>Low-latency visibility:</b> streaming + event timeline for operators.</span></li>
+        <li><span class="bullet"></span><span><b>Robustness:</b> tolerate flaky networks and real-world “this will break” conditions.</span></li>
+        <li><span class="bullet"></span><span><b>Clear separation of concerns:</b> robot does real-time business logic; server does coordination, persistence, UI, and analysis.</span></li>
+        <li><span class="bullet"></span><span><b>Auditability:</b> store events + artifacts so you can answer “what happened?” after the fact.</span></li>
+      </ul>
+      <p class="small" style="margin-top:10px;">
+        Translation: fewer “magic scripts,” more explicit services with logs, configs, and predictable startup behavior.
+      </p>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section id="architecture" class="panel">
+    <h2>Architecture</h2>
+    <p>
+      High-level data flow: the robot produces telemetry + media; the server persists state, serves the UI, and runs local AI analysis.
+      (Yes, the robot now owns headcount/location logic — the server isn’t pretending to be real-time anymore.)
+    </p>
+
+    <div class="diagramWrap" role="img" aria-label="System architecture diagram">
+      <div class="diagramHead">
+        <span><b>Robot</b> (real-time logic) → <b>Server</b> (UI + DB + AI)</span>
+        <span class="muted">click to zoom: <span class="kbd">Ctrl</span> + <span class="kbd">+</span> in browser</span>
+      </div>
+
+      <!-- Simple inline SVG diagram -->
+      <svg class="diagram" viewBox="0 0 1100 520" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="rgba(125,211,252,.55)"/>
+            <stop offset="1" stop-color="rgba(167,139,250,.55)"/>
+          </linearGradient>
+          <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="rgba(0,0,0,.45)"/>
+          </filter>
+        </defs>
+
+        <!-- Background -->
+        <rect x="0" y="0" width="1100" height="520" fill="rgba(15,22,32,.35)"/>
+
+        <!-- Robot box -->
+        <rect x="70" y="85" width="420" height="350" rx="18" fill="rgba(18,27,38,.85)" stroke="rgba(36,50,70,.9)" filter="url(#shadow)"/>
+        <text x="90" y="120" fill="rgba(231,238,248,.92)" font-size="18" font-weight="700">Robot-side services</text>
+        <text x="90" y="145" fill="rgba(168,179,199,.9)" font-size="13">Real-time logic + media production</text>
+
+        <!-- Robot services -->
+        <g font-size="13" fill="rgba(231,238,248,.9)">
+          <rect x="95" y="175" width="370" height="56" rx="14" fill="rgba(231,238,248,.04)" stroke="rgba(231,238,248,.10)"/>
+          <text x="112" y="200" font-weight="700">Navigation → Location Mapping</text>
+          <text x="112" y="220" fill="rgba(168,179,199,.9)">Low-level nav events → DB location context</text>
+
+          <rect x="95" y="245" width="370" height="56" rx="14" fill="rgba(231,238,248,.04)" stroke="rgba(231,238,248,.10)"/>
+          <text x="112" y="270" font-weight="700">Headcount / Business Logic</text>
+          <text x="112" y="290" fill="rgba(168,179,199,.9)">Mode handling, event generation, workflow</text>
+
+          <rect x="95" y="315" width="370" height="56" rx="14" fill="rgba(231,238,248,.04)" stroke="rgba(231,238,248,.10)"/>
+          <text x="112" y="340" font-weight="700">Media Client / Streaming Producer</text>
+          <text x="112" y="360" fill="rgba(168,179,199,.9)">Video + audio → server pipeline</text>
+
+          <rect x="95" y="385" width="370" height="38" rx="14" fill="rgba(231,238,248,.04)" stroke="rgba(231,238,248,.10)"/>
+          <text x="112" y="410" font-weight="700">Arm Server / Window Alignment</text>
+        </g>
+
+        <!-- Server box -->
+        <rect x="610" y="85" width="420" height="350" rx="18" fill="rgba(18,27,38,.85)" stroke="rgba(36,50,70,.9)" filter="url(#shadow)"/>
+        <text x="630" y="120" fill="rgba(231,238,248,.92)" font-size="18" font-weight="700">Server-side stack</text>
+        <text x="630" y="145" fill="rgba(168,179,199,.9)" font-size="13">UI + persistence + analysis + streaming coordination</text>
+
+        <!-- Server services -->
+        <g font-size="13" fill="rgba(231,238,248,.9)">
+          <rect x="635" y="175" width="370" height="56" rx="14" fill="rgba(231,238,248,.04)" stroke="rgba(231,238,248,.10)"/>
+          <text x="652" y="200" font-weight="700">Prison API + UI (Flask)</text>
+          <text x="652" y="220" fill="rgba(168,179,199,.9)">Operator dashboard, control, event ingestion</text>
+
+          <rect x="635" y="245" width="370" height="56" rx="14" fill="rgba(231,238,248,.04)" stroke="rgba(231,238,248,.10)"/>
+          <text x="652" y="270" font-weight="700">PostgreSQL</text>
+          <text x="652" y="290" fill="rgba(168,179,199,.9)">Patrols, locations, events, artifacts</text>
+
+          <rect x="635" y="315" width="370" height="56" rx="14" fill="rgba(231,238,248,.04)" stroke="rgba(231,238,248,.10)"/>
+          <text x="652" y="340" font-weight="700">MediaMTX</text>
+          <text x="652" y="360" fill="rgba(168,179,199,.9)">RTSP/WebRTC routing + stream endpoints</text>
+
+          <rect x="635" y="385" width="370" height="38" rx="14" fill="rgba(231,238,248,.04)" stroke="rgba(231,238,248,.10)"/>
+          <text x="652" y="410" font-weight="700">Ollama (Local LLM image analysis)</text>
+        </g>
+
+        <!-- Arrows -->
+        <g stroke="url(#g1)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 490 235 C 560 235, 540 235, 610 235" />
+          <path d="M 490 340 C 560 340, 540 340, 610 340" />
+        </g>
+        <g fill="rgba(231,238,248,.9)">
+          <polygon points="610,235 595,228 595,242" />
+          <polygon points="610,340 595,333 595,347" />
+        </g>
+
+        <!-- Labels -->
+        <text x="505" y="220" fill="rgba(168,179,199,.9)" font-size="12" font-family="ui-monospace, Menlo, Consolas, monospace">
+          telemetry / events
+        </text>
+        <text x="505" y="325" fill="rgba(168,179,199,.9)" font-size="12" font-family="ui-monospace, Menlo, Consolas, monospace">
+          video/audio streams
+        </text>
+
+        <!-- Bottom note -->
+        <text x="70" y="478" fill="rgba(168,179,199,.85)" font-size="12">
+          Key shift: headcount + location logic moved from server → robot for real-time reliability and clearer boundaries.
+        </text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- SUBSYSTEMS -->
+  <section id="subsystems" class="grid2">
+    <div class="panel">
+      <h2>Subsystems</h2>
+      <p>
+        One “project,” many services. I present it as a single flagship system, with drill-down into the parts that matter.
+      </p>
+
+      <div class="accordion" aria-label="Subsystem details">
+        <details open>
+          <summary>
+            <span class="sumLeft">
+              Robot: Location & Headcount Core
+              <span>Location mapping + headcount/business rules run on the robot now.</span>
+            </span>
+            <span class="chev" aria-hidden="true"></span>
+          </summary>
+          <div class="detailBody">
+            <p>
+              The robot receives navigation signals (arrivals at nodes) and translates them into a high-level
+              location context stored/associated with patrol state. Headcounting logic and mode handling run on-device
+              so decisions aren’t coupled to network conditions or server round trips.
+            </p>
+            <div class="mini">
+              <span class="tag">event-driven</span>
+              <span class="tag">real-time boundaries</span>
+              <span class="tag">state machine</span>
+              <span class="tag">DB-backed location context</span>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <span class="sumLeft">
+              Server: UI + Prison API
+              <span>Operator dashboard, state inspection, admin controls, event ingestion.</span>
+            </span>
+            <span class="chev" aria-hidden="true"></span>
+          </summary>
+          <div class="detailBody">
+            <p>
+              The server serves the UI and API layer. It aggregates incoming events, provides operator visibility,
+              and centralizes persistent storage. The goal is boring reliability: clear endpoints, consistent schemas,
+              and logs you can actually debug at 2 AM.
+            </p>
+            <div class="mini">
+              <span class="tag">Flask</span>
+              <span class="tag">REST endpoints</span>
+              <span class="tag">admin panel</span>
+              <span class="tag">patrol/session model</span>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <span class="sumLeft">
+              Streaming Pipeline (MediaMTX)
+              <span>Robot media → server routing → UI consumption (RTSP/WebRTC).</span>
+            </span>
+            <span class="chev" aria-hidden="true"></span>
+          </summary>
+          <div class="detailBody">
+            <p>
+              MediaMTX provides the streaming backbone. The robot produces streams; the server exposes endpoints for
+              consumption in the operator UI. The design focuses on predictable startup, clean config, and minimal moving parts.
+            </p>
+            <div class="mini">
+              <span class="tag">MediaMTX</span>
+              <span class="tag">RTSP</span>
+              <span class="tag">WebRTC</span>
+              <span class="tag">service management</span>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <span class="sumLeft">
+              Local AI Analysis (Ollama)
+              <span>LLM-powered image analysis on the server (local inference).</span>
+            </span>
+            <span class="chev" aria-hidden="true"></span>
+          </summary>
+          <div class="detailBody">
+            <p>
+              The server runs local inference via Ollama to analyze images (e.g., snapshots captured during patrol workflows).
+              The emphasis is controlled latency and predictable resource usage (important when your hardware budget is “whatever is lying around”).
+            </p>
+            <div class="mini">
+              <span class="tag">Ollama</span>
+              <span class="tag">vision model integration</span>
+              <span class="tag">artifact storage</span>
+              <span class="tag">structured outputs</span>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>
+            <span class="sumLeft">
+              Arm Server / Window Alignment
+              <span>Robot arm positioning using vision + depth to align with windows.</span>
+            </span>
+            <span class="chev" aria-hidden="true"></span>
+          </summary>
+          <div class="detailBody">
+            <p>
+              A dedicated service controls a robot-mounted arm/camera alignment workflow. This is isolated so it can evolve
+              independently and remain testable without destabilizing core patrol logic.
+            </p>
+            <div class="mini">
+              <span class="tag">service isolation</span>
+              <span class="tag">vision + depth</span>
+              <span class="tag">robotics control API</span>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="panel" id="work">
+      <h2>What I owned / built</h2>
+      <p>
+        Not “toy app” work. This is the messy, valuable stuff: splitting responsibilities, stabilizing services,
+        and making the system explain itself.
+      </p>
+      <ul class="list">
+        <li><span class="bullet"></span><span>Designed and implemented server-side API modules for patrol sessions, events, and operator workflows.</span></li>
+        <li><span class="bullet"></span><span>Implemented robot-side location mapping and headcount/business logic, moving real-time responsibilities off the server.</span></li>
+        <li><span class="bullet"></span><span>Integrated MediaMTX as a streaming backbone for robot audio/video → operator UI.</span></li>
+        <li><span class="bullet"></span><span>Designed PostgreSQL schema patterns for events, runs/patrols, and artifact storage.</span></li>
+        <li><span class="bullet"></span><span>Integrated local LLM inference (Ollama) for image analysis with structured results and predictable resource usage.</span></li>
+        <li><span class="bullet"></span><span>Built service boundaries and startup flows so multiple processes per machine remain manageable.</span></li>
+      </ul>
+
+      <section style="margin-top:14px;">
+        <h2 style="font-size:16px;margin:0 0 8px;">Tech stack (representative)</h2>
+        <div class="pillRow">
+          <span class="pill"><strong>Python</strong></span>
+          <span class="pill"><strong>Flask</strong></span>
+          <span class="pill"><strong>PostgreSQL</strong></span>
+          <span class="pill"><strong>Linux services</strong></span>
+          <span class="pill"><strong>MediaMTX</strong></span>
+          <span class="pill"><strong>Ollama</strong></span>
+          <span class="pill"><strong>OpenCV / CV models</strong></span>
+          <span class="pill"><strong>WebRTC/RTSP concepts</strong></span>
+          <span class="pill"><strong>Robotics integration</strong></span>
+        </div>
+        <p class="small" style="margin-top:10px;">
+          If you’re wondering “where’s Kubernetes?” — the reality was simpler: small team, constrained machines, and fast iteration.
+          The win was clean service boundaries and operational clarity.
+        </p>
+      </section>
+    </div>
+  </section>
+
+  <!-- EVOLUTION -->
+  <section id="evolution" class="panel">
+    <h2>System evolution</h2>
+    <p>
+      This system changed over time. That’s not a flaw — it’s the job. The key architectural shift was moving
+      headcount + location handling from server-side logic to robot-side logic to improve reliability and reduce coupling.
+    </p>
+
+    <div class="timeline" aria-label="Evolution timeline">
+      <div class="titem">
+        <div class="twhen">Earlier iteration</div>
+        <div class="twhat">Server did headcount + location logic</div>
+        <div class="tnote">
+          Faster to prototype, but server round-trips and coupling made “real-time” behavior fragile.
+          Debugging also got messy because the server was pretending to be the robot’s brain.
+        </div>
+      </div>
+
+      <div class="titem">
+        <div class="twhen">Current architecture</div>
+        <div class="twhat">Robot owns real-time business logic</div>
+        <div class="tnote">
+          Robot handles location mapping and headcount state. Server becomes the control plane:
+          UI + DB + streaming coordination + local AI analysis. Cleaner boundaries, fewer failure cascades.
+        </div>
+      </div>
+
+      <div class="titem">
+        <div class="twhen">Ongoing</div>
+        <div class="twhat">More analysis & artifacts, better operator UX</div>
+        <div class="tnote">
+          Refining the event timeline, adding analysis hooks, and improving repeatable deployment and operations
+          (service management, logs, configs, and sane defaults).
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section id="impact" class="grid2">
+    <div class="panel">
+      <h2>Impact</h2>
+      <ul class="list">
+        <li><span class="bullet"></span><span>Enabled live demos and pilot-style workflows by providing stable UI + streaming + event capture.</span></li>
+        <li><span class="bullet"></span><span>Improved reliability by moving real-time logic to the robot and reducing server coupling.</span></li>
+        <li><span class="bullet"></span><span>Created an auditable record of patrol runs with persisted events and analysis artifacts.</span></li>
+        <li><span class="bullet"></span><span>Made the system easier to operate with explicit services instead of “run this one script and pray.”</span></li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>Constraints & tradeoffs</h2>
+      <ul class="list">
+        <li><span class="bullet"></span><span><b>Can’t share code/demos:</b> solved by writing clear system-level explanations and emphasizing design decisions.</span></li>
+        <li><span class="bullet"></span><span><b>Constrained hardware:</b> local inference with predictable sizing (image downscaling, bounded latency).</span></li>
+        <li><span class="bullet"></span><span><b>Network variability:</b> robot keeps core logic; server provides persistence and visibility.</span></li>
+        <li><span class="bullet"></span><span><b>Small team, fast iteration:</b> architecture optimized for clarity and maintainability over buzzword compliance.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="panel">
+    <h2>FAQ (the questions interviewers actually ask)</h2>
+    <div class="accordion">
+      <details>
+        <summary>
+          <span class="sumLeft">
+            Why move headcount/location logic onto the robot?
+            <span>Reliability, latency, and clean system boundaries.</span>
+          </span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="detailBody">
+          <p>
+            If the server owns real-time logic, network hiccups become business-logic failures.
+            Moving location/headcount onto the robot reduced coupling, improved determinism, and made it easier to reason about state.
+            The server then becomes what it should be: UI + persistence + analysis.
+          </p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="sumLeft">
+            How do you handle “multi-service chaos” during deployment?
+            <span>Explicit services, predictable startup, and logs that tell the truth.</span>
+          </span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="detailBody">
+          <p>
+            Multiple services per machine is manageable when each has a clear responsibility, config, and logging.
+            The goal is minimizing hidden coupling: services communicate through defined APIs and persistent state, not shared assumptions.
+          </p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="sumLeft">
+            What’s the LLM doing here?
+            <span>Local image analysis with structured results (not “AI fairy dust”).</span>
+          </span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="detailBody">
+          <p>
+            The server uses local LLM inference (via Ollama) to analyze captured images and produce structured outputs that can be stored,
+            reviewed, and tied back to patrol events. The design prioritizes bounded latency and predictable resource usage.
+          </p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="sumLeft">
+            Why not just make everything cloud-native?
+            <span>Constraints: hardware, environment, and speed of iteration.</span>
+          </span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="detailBody">
+          <p>
+            Not every project needs a cloud platform to be “real.”
+            This system’s realities were local machines, constrained resources, and fast demo cycles.
+            The focus was reliable services, clear interfaces, and operational simplicity.
+          </p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <footer>
+    <div class="muted">
+      Want to discuss this system? I can walk through:
+      boundaries, state models, failure modes, logging/observability choices, and why certain tradeoffs were made.
+    </div>
+    <div style="margin-top:10px;">
+      <span class="muted">Tip:</span> If you embed this into a larger site, keep this as a dedicated “case study” page and link it from your homepage project card.
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  // Small UX polish: if user opens one accordion item, optionally close others in the same accordion.
+  // Toggle to true if you want "only one open at a time".
+  const ONE_OPEN = false;
+
+  if (ONE_OPEN) {
+    document.querySelectorAll('.accordion').forEach(acc => {
+      const items = acc.querySelectorAll('details');
+      items.forEach(d => {
+        d.addEventListener('toggle', () => {
+          if (!d.open) return;
+          items.forEach(other => { if (other !== d) other.open = false; });
+        });
+      });
+    });
+  }
+
+  // Smooth scrolling for in-page nav.
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href');
+      if (!id || id === '#') return;
+      const el = document.querySelector(id);
+      if (!el) return;
+      e.preventDefault();
+      el.scrollIntoView({behavior: 'smooth', block: 'start'});
+      history.pushState(null, '', id);
+    });
+  });
+</script>
+</body>
+</html>
