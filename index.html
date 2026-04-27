@@ -1,383 +1,277 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dylan Hughes · Software / ML Engineer</title>
-  <meta name="description" content="Portfolio of Dylan Hughes — backend, robotics, ML integration, and full-stack systems." />
-  <meta name="color-scheme" content="dark light">
-  <style>
-    /* ===== CSS Variables ===== */
-    :root {
-      --bg: #0b0d10;
-      --panel: #111419;
-      --muted: #a6adbb;
-      --text: #e6e9ef;
-      --accent: #6cf0ff; /* cool-cyan */
-      --accent-2: #8b5cf6; /* violet */
-      --ring: color-mix(in oklab, var(--accent) 60%, transparent);
-      --card: color-mix(in oklab, var(--panel) 75%, #1a1f27);
-      --shadow: 0 10px 30px color-mix(in oklab, #000 70%, var(--accent) 10%);
-      --radius-xl: 18px;
-      --radius-lg: 14px;
-      --radius-md: 10px;
-      --maxw: 1100px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-    }
-
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #f7f8fb;
-        --panel: #ffffff;
-        --muted: #5b6473;
-        --text: #0e1624;
-        --card: #ffffff;
-        --shadow: 0 10px 30px rgba(0,0,0,.08);
-      }
-    }
-
-    /* ===== Base ===== */
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; color:var(--text); background:radial-gradient(1200px 600px at 20% -10%, color-mix(in oklab, var(--accent) 12%, transparent), transparent),
-      radial-gradient(900px 500px at 110% 10%, color-mix(in oklab, var(--accent-2) 12%, transparent), transparent),
-      var(--bg);
-      background-attachment: fixed, fixed, fixed; /* keep both gradients + base color fixed */
-      font-family: var(--sans);
-      line-height:1.55;
-      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
-    }
-    a{color:inherit}
-    .container{max-width:var(--maxw); margin:auto; padding:0 20px}
-
-    /* ===== Top Nav ===== */
-    header{
-      position:sticky; top:0; z-index:50; backdrop-filter: saturate(140%) blur(8px);
-      background: color-mix(in oklab, var(--panel) 70%, transparent);
-      border-bottom: 1px solid color-mix(in oklab, var(--muted) 20%, transparent);
-    }
-    .nav{display:flex; align-items:center; gap:14px; padding:14px 0}
-    .brand{font-weight:800; letter-spacing:.2px}
-    .brand .dot{color:var(--accent)}
-    .nav-spacer{flex:1}
-    .nav a{opacity:.85; text-decoration:none; padding:8px 12px; border-radius:10px}
-    .nav a:hover{background: color-mix(in oklab, var(--accent) 12%, transparent)}
-    .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; border:1px solid color-mix(in oklab, var(--accent) 40%, transparent); box-shadow: var(--shadow);
-         text-decoration:none; font-weight:600; background:linear-gradient(180deg, color-mix(in oklab, var(--panel) 90%, transparent), color-mix(in oklab, var(--panel) 70%, transparent));}
-    .btn:hover{outline:2px solid var(--ring)}
-
-    .theme-toggle{border:none; background:transparent; font:inherit; padding:8px 10px; border-radius:10px; cursor:pointer}
-    .theme-toggle:hover{background: color-mix(in oklab, var(--accent) 12%, transparent)}
-
-    /* ===== Hero ===== */
-    .hero{padding:64px 0 32px}
-    .hero-grid{display:grid; grid-template-columns:1.4fr .9fr; gap:28px; align-items:center}
-    .title{font-size:clamp(28px, 4vw, 44px); font-weight:900; letter-spacing:.3px; line-height:1.1}
-    .sub{font-size:clamp(16px, 1.7vw, 18px); color:var(--muted)}
-    .quick{display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 6px}
-    .chip{padding:6px 10px; border-radius:999px; border:1px solid color-mix(in oklab, var(--muted) 35%, transparent); font-size:13px; color:var(--muted)}
-    .hero-card{
-      border-radius:var(--radius-xl);
-      background:linear-gradient(180deg, color-mix(in oklab, var(--card) 86%, transparent), color-mix(in oklab, var(--card) 96%, transparent));
-      border:1px solid color-mix(in oklab, var(--accent) 25%, transparent);
-      box-shadow: var(--shadow);
-      padding:18px; display:grid; gap:14px
-    }
-    .stat{display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px dashed color-mix(in oklab, var(--muted) 35%, transparent); border-radius:12px}
-    .stat strong{font-family:var(--mono)}
-
-    /* ===== Sections ===== */
-    section{padding:42px 0}
-    .h2{font-size:clamp(18px, 1.6vw, 22px); text-transform:uppercase; letter-spacing:.18em; color:var(--muted)}
-    .section-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:16px}
-
-    /* ===== Projects ===== */
-    .grid{display:grid; grid-template-columns: repeat(12, 1fr); gap:18px}
-    .card{
-      grid-column: span 6;
-      border-radius:var(--radius-lg);
-      background:linear-gradient(180deg, color-mix(in oklab, var(--card) 92%, transparent), color-mix(in oklab, var(--card) 98%, transparent));
-      border:1px solid color-mix(in oklab, var(--accent-2) 12%, color-mix(in oklab, var(--muted) 25%, transparent));
-      box-shadow: var(--shadow);
-      padding:18px; display:flex; flex-direction:column; gap:12px; position:relative; overflow:hidden
-    }
-    .card:hover{outline:2px solid var(--ring)}
-    .card .tags{display:flex; flex-wrap:wrap; gap:8px}
-    .tag{font-size:12px; padding:4px 8px; border-radius:999px; background: color-mix(in oklab, var(--accent) 14%, transparent); color: color-mix(in oklab, var(--accent) 80%, white)}
-    .card h3{margin:2px 0 0; font-size:20px; letter-spacing:.2px}
-    .card p{margin:0; color:var(--muted)}
-    .card .links{display:flex; gap:10px; margin-top:auto}
-    .link{font-size:14px; text-decoration:none; border-bottom:1px dashed color-mix(in oklab, var(--accent) 60%, transparent)}
-
-    /* ===== Experience ===== */
-    .exp{display:grid; gap:14px}
-    .exp-item{display:grid; grid-template-columns: 1fr auto; gap:10px; padding:16px; border-radius:var(--radius-md);
-              border:1px solid color-mix(in oklab, var(--muted) 30%, transparent); background: color-mix(in oklab, var(--panel) 85%, transparent)}
-    .exp .where{font-weight:700}
-    .exp .meta{color:var(--muted); font-family:var(--mono); font-size:13px}
-    .exp ul{margin:8px 0 0 18px; color:var(--muted)}
-
-    /* ===== Skills ===== */
-    .skills{display:flex; flex-wrap:wrap; gap:10px}
-
-    /* ===== Footer ===== */
-    footer{padding:40px 0 60px; color:var(--muted)}
-    .foot-actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
-
-    /* ===== Filters / Utilities ===== */
-    .filters{display:flex; flex-wrap:wrap; gap:10px}
-    .filter{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid color-mix(in oklab, var(--muted) 35%, transparent); cursor:pointer; user-select:none}
-    .filter input{appearance:none; width:14px; height:14px; border-radius:4px; border:1px solid color-mix(in oklab, var(--muted) 40%, transparent); display:inline-block; position:relative}
-    .filter input:checked{background:var(--accent); border-color:var(--accent)}
-
-    /* ===== Responsive ===== */
-    @media (max-width: 960px){
-      .hero-grid{grid-template-columns:1fr}
-      .card{grid-column: span 12}
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dylan Hughes — Software Engineer</title>
+    <meta name="description" content="Dylan Hughes — Backend and systems-focused software engineer building distributed applications with robotics, real-time processing, and AI-driven analysis.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- ===== Header / Nav ===== -->
-  <header>
-    <div class="container nav">
-      <div class="brand">Dylan Hughes<span class="dot">_</span></div>
-      <nav class="nav-spacer">
-        <a href="#projects">Projects</a>
-        <a href="#experience">Experience</a>
-        <a href="#skills">Skills</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <!-- <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌓</button> -->
-      <a class="btn" href="https://github.com/hughes-dev" target="_blank" rel="noopener">GitHub ↗</a>
-    </div>
-  </header>
 
-  <main class="container">
-    <!-- ===== Hero ===== -->
-    <section class="hero" id="home">
-      <div class="hero-grid">
-        <div>
-          <h1 class="title">Backend-centric Software Engineer building ML-powered robotics systems.</h1>
-          <p class="sub">Joplin, MO · <a href="mailto:dylan.hughes.dev@gmail.com">dylan.hughes.dev@gmail.com</a></p>
-          <div class="quick" aria-label="quick facts">
-            <span class="chip">Flask + PostgreSQL</span>
-            <span class="chip">Computer Vision (YOLO, InsightFace)</span>
-            <span class="chip">Node.js + WebRTC</span>
-            <span class="chip">C#/.NET</span>
-            <span class="chip">Linux</span>
-            <span class="chip">Robotics</span>
-          </div>
-        </div>
-        <aside class="hero-card" aria-label="summary">
-          <div class="stat"><strong>Role:</strong> Software / ML-Integration Engineer</div>
-          <div class="stat"><strong>Degree:</strong> B.S. Computational Mathematics (Dec 2025)</div>
-          <div class="stat"><strong>Focus:</strong> Backend systems, CV/ML integration, robotics control</div>
-          <div class="stat"><strong>Looking for:</strong> SWE / Backend / ML Engineer roles</div>
-        </aside>
-      </div>
-    </section>
-
-    <!-- ===== Projects ===== -->
-    <section id="projects">
-      <div class="section-head">
-        <div class="h2">Projects</div>
-        <div class="filters" aria-label="project filters">
-          <label class="filter"><input type="checkbox" value="backend" checked> Backend</label>
-          <label class="filter"><input type="checkbox" value="ml" checked> ML / CV</label>
-          <label class="filter"><input type="checkbox" value="robotics" checked> Robotics</label>
-          <label class="filter"><input type="checkbox" value="csharp" checked> C#</label>
-        </div>
-      </div>
-      <div class="grid" id="projectGrid">
-        <!-- Project cards rendered by JS for future extensibility -->
-      </div>
-    </section>
-
-    <!-- ===== Experience ===== -->
-    <section id="experience">
-      <div class="section-head"><div class="h2">Experience</div></div>
-      <div class="exp">
-        <div class="exp-item">
-          <div>
-            <div class="where">Stokes Robotics — Development Engineer Intern</div>
-            <ul>
-              <li>Designed a Flask + PostgreSQL backend coordinating patrols, headcounting, facial recognition, and robotic-arm window alignment.</li>
-              <li>Integrated ML models (InsightFace) and planned YOLO retraining for real-time perception.</li>
-              <li>Built two-way audio subsystem (Node.js, WebRTC) and developed thermal-camera tooling.</li>
-              <li>Operated as primary developer: architecture, implementation, and cross-team coordination.</li>
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-brand">Dylan Hughes</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+                <svg class="icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+                <svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#skills" class="nav-link">Skills</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
-          </div>
-          <div class="meta">Oct 2023 — Present · Carl Junction, MO</div>
         </div>
+    </nav>
 
-        <div class="exp-item">
-          <div>
-            <div class="where">Netware Technologies — Software Engineering Intern</div>
-            <ul>
-              <li>Converted legacy VB6 apps to VB.NET and C# improving stability and maintainability.</li>
-              <li>Delivered two major conversions end-to-end including testing and validation.</li>
-            </ul>
-          </div>
-          <div class="meta">Summer 2023 · Goodman, MO</div>
+    <main>
+
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <h1 class="hero-name">Dylan Hughes</h1>
+                <span class="hero-eyebrow">Software Engineer</span>
+                <p class="hero-tagline">Backend and systems-focused engineer building distributed applications that integrate robotics, real-time processing, and AI-driven analysis.</p>
+                <div class="hero-cta">
+                    <a href="https://github.com/hughes-dev" target="_blank" rel="noopener noreferrer" class="btn btn-primary">GitHub</a>
+                    <a href="https://www.linkedin.com/in/hughes-dev/" target="_blank" rel="noopener noreferrer" class="btn btn-outline">LinkedIn</a>
+                    <a href="mailto:dylan.hughes.dev@gmail.com" class="btn btn-outline">Get in Touch</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="projects">
+            <div class="container">
+                <h2 class="section-heading">Projects</h2>
+
+                <article class="project-featured fade-in">
+                    <header class="project-featured-header">
+                        <div class="project-meta">
+                            <span class="badge">Work Project</span>
+                            <span class="badge badge-subtle">Proprietary Code</span>
+                        </div>
+                        <h3 class="project-featured-name">Robotics-Based Facility Monitoring System</h3>
+                        <p class="project-featured-role">Backend &amp; AI Pipeline &middot; Primary Engineer</p>
+                    </header>
+
+                    <div class="project-featured-body">
+                        <div class="project-description">
+                            <p>Built the backend for a robotics-based monitoring platform performing automated patrols and analyzing conditions inside a correctional facility. A mobile robot navigates the environment, streams live camera feeds, and captures inspection video sent to a central server for processing.</p>
+                            <p>The server ingests video data, runs automated analysis, and presents results to operators through a live dashboard. Analysis includes person detection, motion and activity recognition, face matching against a known registry, contraband detection, and vision-language model-based scene interpretation.</p>
+                            <p>Operators can view live video streams, review analysis results, and receive real-time alerts across web and mobile interfaces. The system runs across multiple machines within a local network and operates fully offline.</p>
+                        </div>
+
+                        <div class="project-architecture">
+                            <p class="architecture-label">System Architecture</p>
+                            <pre class="diagram">┌──────────────────────────────┐
+│        Web / Mobile UI       │
+│   Dashboard + Alerts View    │
+└──────────────┬───────────────┘
+               │
+┌──────────────┴───────────────┐
+│        Central Server        │
+│   API + Worker + Database    │
+└──────────────┬───────────────┘
+               │
+┌──────────────┴───────────────┐
+│         Edge Device          │
+│  Control, Execution, Streams │
+└──────────────────────────────┘</pre>
+                            <ul class="component-list">
+                                <li><strong>Central server</strong> — coordination, processing, analysis</li>
+                                <li><strong>Mobile robots</strong> — video and sensor capture on patrol</li>
+                                <li><strong>Edge compute</strong> — custom software on each robot</li>
+                                <li><strong>Client devices</strong> — browser dashboards and mobile apps</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="project-built">
+                        <h4 class="project-built-heading">What I Built</h4>
+                        <ul class="project-built-list">
+                            <li>Designed and implemented the backend architecture for a multi-service robotics platform</li>
+                            <li>Built the API layer for patrol coordination, media ingestion, and real-time communication</li>
+                            <li>Designed core data models and database schema using PostgreSQL</li>
+                            <li>Built an asynchronous video analysis pipeline integrating computer vision and LLM-based inference</li>
+                            <li>Implemented a PostgreSQL-based job queue and inter-service communication system</li>
+                            <li>Selected and integrated infrastructure including PostgreSQL and MediaMTX for real-time streaming</li>
+                            <li>Developed real-time alerting and state synchronization using WebSockets across multiple clients</li>
+                            <li>Built a mobile-compatible dashboard and Android wrapper for real-time monitoring</li>
+                            <li>Contributed to robot-side development including vision-based alignment using object detection</li>
+                        </ul>
+                    </div>
+
+                    <footer class="project-featured-footer">
+                        <div class="tech-stack">
+                            <span class="tag">Python</span>
+                            <span class="tag">FastAPI</span>
+                            <span class="tag">PostgreSQL</span>
+                            <span class="tag">OpenCV</span>
+                            <span class="tag">YOLO</span>
+                            <span class="tag">InsightFace</span>
+                            <span class="tag">Ollama</span>
+                            <span class="tag">WebSockets</span>
+                            <span class="tag">WebRTC</span>
+                            <span class="tag">MediaMTX</span>
+                        </div>
+                        <p class="project-note">Source code is not publicly available &mdash; proprietary company work.</p>
+                    </footer>
+                </article>
+
+                <div class="projects-grid">
+
+                    <article class="project-card fade-in">
+                        <header class="project-card-header">
+                            <div class="project-card-title-group">
+                                <h3 class="project-card-name">Agent Console</h3>
+                                <p class="project-card-sub">Remote Interface for Local AI Agent</p>
+                            </div>
+                            <a href="https://github.com/hughes-dev/agent-interface" target="_blank" rel="noopener noreferrer" class="github-link" aria-label="View on GitHub">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                                </svg>
+                            </a>
+                        </header>
+                        <p class="project-card-desc">A Slack-based interface for interacting with a locally running AI agent from any device. Routes messages to a local Claude Code agent, supports voice input via transcription, and generates spoken responses &mdash; enabling remote monitoring and iteration on background tasks.</p>
+                        <ul class="project-card-list">
+                            <li>Routes Slack messages to a local Claude Code agent with in-channel responses</li>
+                            <li>Voice input via audio transcription; spoken replies via TTS</li>
+                            <li>Handles long agent output by uploading as file with a short preview</li>
+                            <li>Persistent WebSocket connection; all processing runs on the host machine</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span class="tag">Python</span>
+                            <span class="tag">Slack API</span>
+                            <span class="tag">Claude Code SDK</span>
+                            <span class="tag">Whisper.cpp</span>
+                            <span class="tag">Piper TTS</span>
+                            <span class="tag">asyncio</span>
+                        </div>
+                    </article>
+
+                    <article class="project-card fade-in">
+                        <header class="project-card-header">
+                            <div class="project-card-title-group">
+                                <h3 class="project-card-name">Physics Simulator</h3>
+                                <p class="project-card-sub">2D Gravitational Simulation</p>
+                            </div>
+                            <a href="https://github.com/hughes-dev/PhysicsSimulators" target="_blank" rel="noopener noreferrer" class="github-link" aria-label="View on GitHub">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                                </svg>
+                            </a>
+                        </header>
+                        <p class="project-card-desc">A 2D physics simulation modeling gravitational interactions between objects, including orbital motion and black hole behavior. Focus was on implementing the underlying physics calculations and simulation logic, demonstrating mathematical modeling and numerical methods.</p>
+                        <div class="tech-stack" style="margin-top: auto;">
+                            <span class="tag">C#</span>
+                            <span class="tag">WPF</span>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-alt" id="skills">
+            <div class="container">
+                <h2 class="section-heading">Skills</h2>
+                <div class="skills-grid">
+                    <div class="skill-group fade-in">
+                        <h3 class="skill-group-name">Languages</h3>
+                        <div class="tech-stack">
+                            <span class="tag">Python</span>
+                            <span class="tag">C#</span>
+                            <span class="tag">SQL</span>
+                        </div>
+                    </div>
+                    <div class="skill-group fade-in">
+                        <h3 class="skill-group-name">Backend &amp; Systems</h3>
+                        <div class="tech-stack">
+                            <span class="tag">System Design</span>
+                            <span class="tag">Distributed Systems</span>
+                            <span class="tag">FastAPI</span>
+                            <span class="tag">Flask</span>
+                            <span class="tag">PostgreSQL</span>
+                            <span class="tag">REST APIs</span>
+                            <span class="tag">WebSockets</span>
+                        </div>
+                    </div>
+                    <div class="skill-group fade-in">
+                        <h3 class="skill-group-name">AI &amp; Data</h3>
+                        <div class="tech-stack">
+                            <span class="tag">Computer Vision</span>
+                            <span class="tag">OpenCV</span>
+                            <span class="tag">Object Detection (YOLO)</span>
+                            <span class="tag">LLM Integration</span>
+                            <span class="tag">Inference Pipelines</span>
+                        </div>
+                    </div>
+                    <div class="skill-group fade-in">
+                        <h3 class="skill-group-name">Streaming &amp; Media</h3>
+                        <div class="tech-stack">
+                            <span class="tag">MediaMTX</span>
+                            <span class="tag">RTSP</span>
+                            <span class="tag">WebRTC</span>
+                        </div>
+                    </div>
+                    <div class="skill-group fade-in">
+                        <h3 class="skill-group-name">Tools &amp; Environment</h3>
+                        <div class="tech-stack">
+                            <span class="tag">Linux</span>
+                            <span class="tag">Git</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="contact">
+            <div class="container">
+                <h2 class="section-heading">Get in Touch</h2>
+                <p class="contact-intro">Open to backend and systems engineering roles involving distributed systems, real-time processing, or AI integration. B.S. Computational Mathematics, Missouri Southern State University (2025). Based in SW Missouri, open to relocation.</p>
+                <div class="contact-links">
+                    <a href="mailto:dylan.hughes.dev@gmail.com" class="contact-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        dylan.hughes.dev@gmail.com
+                    </a>
+                    <a href="https://github.com/hughes-dev" target="_blank" rel="noopener noreferrer" class="contact-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                        </svg>
+                        github.com/hughes-dev
+                    </a>
+                    <a href="https://www.linkedin.com/in/hughes-dev/" target="_blank" rel="noopener noreferrer" class="contact-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                            <rect x="2" y="9" width="4" height="12"/>
+                            <circle cx="4" cy="4" r="2"/>
+                        </svg>
+                        linkedin.com/in/hughes-dev
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Dylan Hughes &middot; Software Engineer &middot; SW Missouri</p>
         </div>
-      </div>
-    </section>
+    </footer>
 
-    <!-- ===== Skills ===== -->
-    <section id="skills">
-      <div class="section-head"><div class="h2">Skills</div></div>
-      <div class="skills">
-        <span class="chip">Python (Flask)</span>
-        <span class="chip">PostgreSQL</span>
-        <span class="chip">Node.js</span>
-        <span class="chip">WebRTC</span>
-        <span class="chip">OpenCV</span>
-        <span class="chip">YOLO</span>
-        <span class="chip">InsightFace</span>
-        <span class="chip">C#/.NET</span>
-        <span class="chip">Linux</span>
-        <span class="chip">REST APIs</span>
-        <span class="chip">SQL</span>
-        <span class="chip">HTML/CSS/JS</span>
-        <span class="chip">Basic C++</span>
-      </div>
-    </section>
-
-    <!-- ===== Contact ===== -->
-    <section id="contact">
-      <div class="section-head"><div class="h2">Contact</div></div>
-      <div class="hero-card">
-        <div class="stat"><strong>Email:</strong> <a href="mailto:dylan.hughes.dev@gmail.com">dylan.hughes.dev@gmail.com</a> <button class="theme-toggle" id="copyEmail" aria-label="Copy email">Copy</button></div>
-        <div class="stat"><strong>GitHub:</strong> <a href="https://github.com/hughes-dev" target="_blank" rel="noopener">github.com/hughes-dev ↗</a></div>
-		<div class="stat"><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/hughes-dev/" target="_blank" rel="noopener">linkedin.com/in/hughes-dev ↗</a></div>
-		<p class="sub">Feel free to reach out for collaboration, questions, or just to connect!</p>
-      </div>
-    </section>
-  </main>
-
-  <footer class="container">
-    <div>© <span id="year"></span> Dylan Hughes.</div>
-    <div class="foot-actions">
-      <a class="btn" href="#home">Back to top ↑</a>
-    </div>
-  </footer>
-
-  <script>
-    // ===== Minimal JS: Theme, Projects, Filters, Helpers =====
-
-    // Theme toggle with localStorage
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const themeToggle = document.getElementById('themeToggle');
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme === 'light') document.documentElement.style.colorScheme = 'light';
-    if (storedTheme === 'dark') document.documentElement.style.colorScheme = 'dark';
-    if (!storedTheme) document.documentElement.style.colorScheme = prefersDark ? 'dark' : 'light';
-    themeToggle?.addEventListener('click', () => {
-      const current = document.documentElement.style.colorScheme;
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.style.colorScheme = next;
-      localStorage.setItem('theme', next);
-    });
-
-    // Project data
-    const projects = [
-      {
-        title: 'Prison Robotics Control System',
-        summary: 'Central coordination server for patrols, headcounting, facial recognition, window alignment, and audio.',
-        tags: ['backend','ml','robotics','python','flask','postgresql','webrtc'],
-        links: [
-          {href: '#', label: 'Case Study (soon)'}
-        ]
-      },
-      {
-        title: 'Robotic Arm Window Alignment',
-        summary: 'CV-driven pose alignment using depth + detection to center a window in-view for manipulation.',
-        tags: ['ml','robotics','opencv','yolo','python'],
-        links: [
-          {href: '#', label: 'Demo Notes'}
-        ]
-      },
-      {
-        title: 'Two-Way Audio Subsystem',
-        summary: 'Node.js + WebRTC service integrated with Flask UI for real-time operator ↔ robot comms.',
-        tags: ['backend','webrtc','node','python'],
-        links: [
-          {href: '#', label: 'Architecture'}
-        ]
-      },
-      {
-        title: 'Thermal Camera Analysis Tools',
-        summary: 'Processing utilities and calibration helpers for thermal frames; reporting and quick-viz.',
-        tags: ['ml','python','opencv','backend'],
-        links: [
-          {href: '#', label: 'Notes'}
-        ]
-      },
-      {
-        title: 'Black Hole Gravity Simulator',
-        summary: 'Interactive multi-body gravity sim (C# / WPF) with real-time numeric integration and viz.',
-        tags: ['csharp'],
-        links: [
-          {href: '#', label: 'Readme'}
-        ]
-      },
-    ];
-
-    // Render project cards
-    const grid = document.getElementById('projectGrid');
-    function tagToBadge(t){
-      const map = { backend:'Backend', ml:'ML/CV', robotics:'Robotics', csharp:'C#/.NET' };
-      if (map[t]) return `<span class="tag">${map[t]}</span>`;
-      return '';
-    }
-
-    function renderProjects(){
-      const active = new Set([...document.querySelectorAll('.filters input:checked')].map(i=>i.value));
-      grid.innerHTML = '';
-      projects.forEach(p => {
-        const hits = p.tags.filter(t => active.has(t));
-        if (hits.length === 0) return; // filtered out
-        const badges = [...new Set(p.tags.map(tagToBadge).filter(Boolean))].join('');
-        const links = (p.links||[]).map(l=>`<a class="link" href="${l.href}">${l.label} →</a>`).join('');
-        const el = document.createElement('article');
-        el.className = 'card';
-        el.innerHTML = `
-          <div class="tags">${badges}</div>
-          <h3>${p.title}</h3>
-          <p>${p.summary}</p>
-          <div class="links">${links}</div>
-        `;
-        grid.appendChild(el);
-      });
-    }
-
-    document.querySelectorAll('.filters input').forEach(i=> i.addEventListener('change', renderProjects));
-    renderProjects();
-
-    // Helpers
-    document.getElementById('year').textContent = new Date().getFullYear();
-    const copyBtn = document.getElementById('copyEmail');
-    copyBtn?.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText('dylan.hughes.dev@gmail.com');
-        copyBtn.textContent = 'Copied!';
-        setTimeout(()=> copyBtn.textContent = 'Copy', 1200);
-      } catch(_) { /* no-op */ }
-    });
-
-    // Smooth scroll for same-page anchors
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click', (e)=>{
-        const id = a.getAttribute('href');
-        if (id.length > 1) {
-          e.preventDefault();
-          document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'});
-        }
-      });
-    });
-  </script>
+    <script src="script.js"></script>
 </body>
 </html>
